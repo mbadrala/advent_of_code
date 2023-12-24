@@ -41,23 +41,23 @@
 # Consider your entire calibration document. What is the sum of all of the
 # calibration values?o
 
-# sum = 0
+sum = 0
 
 inputFile = open('day_01_input.txt', 'r')
 lines = inputFile.readlines()
 
-# for line in lines:
-#     local_number = ''
-#     res = [x for x in line if x.isdigit() == True]
-#     if len(res) > 1:
-#         local_number += res[0] + res[-1]
-#     else:
-#         if len(res) > 0:
-#             local_number = res[0] + res[0]
-#     if len(local_number) > 0:
-#         sum += int(local_number)
+for line in lines:
+    local_number = ''
+    res = [x for x in line if x.isdigit() == True]
+    if len(res) > 1:
+        local_number += res[0] + res[-1]
+    else:
+        if len(res) > 0:
+            local_number = res[0] + res[0]
+    if len(local_number) > 0:
+        sum += int(local_number)
 
-# print('sum:', sum)
+print('part 1 sum:', sum)
 
 # --- Part Two ---
 # Your calculation isn't quite right. It looks like some of the digits are
@@ -92,10 +92,11 @@ number_dict = {
     "nine":  "9",
 }
 
-sum = 0
 import re
 
-def add_found(result, spelled):
+sum = 0
+
+def add_spelled(result, spelled):
     num_found = {}
 
     for num, desc in number_dict.items():
@@ -118,13 +119,13 @@ for line in lines:
     for index, char in enumerate(line):
         if char.isdigit():
             if len(spelled) > 0:
-                res = add_found(res, spelled)
+                res = add_spelled(res, spelled)
                 spelled  = ''
             res.append(char)
         else:
             spelled += char
             if index + 1 == len(line):
-                res = add_found(res, spelled)
+                res = add_spelled(res, spelled)
                 spelled  = ''
 
     res_length = len(res)
@@ -136,5 +137,4 @@ for line in lines:
     if len(local_number) > 0:
         sum += int(local_number)
 
-    print(line.rstrip(), '->', local_number)
-print('sum:', sum)
+print('part 2 sum:', sum)
