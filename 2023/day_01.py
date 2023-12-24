@@ -41,19 +41,100 @@
 # Consider your entire calibration document. What is the sum of all of the
 # calibration values?o
 
-sum = 0
+# sum = 0
 
 inputFile = open('day_01_input.txt', 'r')
 lines = inputFile.readlines()
 
-for line in lines:
-    localnumber = ''
-    res = [x for x in line if x.isdigit() == True]
-    if len(res) > 1:
-        localnumber += res[0] + res[-1]
-    else:
-        localnumber = res[0] + res[0]
-    if len(localnumber) > 0:
-        sum += int(localnumber)
+# for line in lines:
+#     local_number = ''
+#     res = [x for x in line if x.isdigit() == True]
+#     if len(res) > 1:
+#         local_number += res[0] + res[-1]
+#     else:
+#         if len(res) > 0:
+#             local_number = res[0] + res[0]
+#     if len(local_number) > 0:
+#         sum += int(local_number)
 
+# print('sum:', sum)
+
+# --- Part Two ---
+# Your calculation isn't quite right. It looks like some of the digits are
+# actually spelled out with letters: one, two, three, four, five, six, seven,
+# eight, and nine also count as valid "digits".
+# 
+# Equipped with this new information, you now need to find the real first and
+# last digit on each line. For example:
+# 
+# two1nine
+# eightwothree
+# abcone2threexyz
+# xtwone3four
+# 4nineeightseven2
+# zoneight234
+# 7pqrstsixteen
+# In this example, the calibration values are 29, 83, 13, 24, 42, 14, and 76.
+# Adding these together produces 281.
+# 
+# What is the sum of all of the calibration values?
+# 
+
+number_dict = {
+    "one":   "1",
+    "two":   "2",
+    "three": "3",
+    "four":  "4",
+    "five":  "5",
+    "six":   "6",
+    "seven": "7",
+    "eight": "8",
+    "nine":  "9",
+}
+
+sum = 0
+import re
+
+def add_found(result, spelled):
+    num_found = {}
+
+    for num, desc in number_dict.items():
+        exp = '(?='+ num +')'
+        found = [m.start() for m in re.finditer(exp, spelled)]
+        if len(found) > 0:
+            for f_index in found:
+                num_found[f_index] = desc
+
+    num_found = dict(sorted(num_found.items()))
+    for key, num in num_found.items():
+        result.append(num)
+    return result
+
+for line in lines:
+    local_number = ''
+    res = []
+    spelled = ''
+    
+    for index, char in enumerate(line):
+        if char.isdigit():
+            if len(spelled) > 0:
+                res = add_found(res, spelled)
+                spelled  = ''
+            res.append(char)
+        else:
+            spelled += char
+            if index + 1 == len(line):
+                res = add_found(res, spelled)
+                spelled  = ''
+
+    res_length = len(res)
+    if res_length > 1:
+        local_number += str(res[0]) + str(res[-1])
+    else:
+        if len(res) > 0:
+            local_number = str(res[0]) + str(res[0])
+    if len(local_number) > 0:
+        sum += int(local_number)
+
+    print(line.rstrip(), '->', local_number)
 print('sum:', sum)
